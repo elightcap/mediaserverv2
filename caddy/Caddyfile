@@ -1,0 +1,18 @@
+{
+    # acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
+}
+plex.{$MY_DOMAIN} {
+    reverse_proxy plex:32400
+}
+
+nzbget.{$MY_DOMAIN} {
+    reverse_proxy nzbget:80
+}
+
+sabnzbd.{MY_DOMAIN} {
+    reverse_proxy sabnzbd:80
+}
+
+sonarr.{MY_DOMAIN} {
+    reverse_proxy sonarr:80
+}
