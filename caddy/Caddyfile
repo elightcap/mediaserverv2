@@ -6,13 +6,27 @@ plex.{$MY_DOMAIN} {
 }
 
 nzbget.{$MY_DOMAIN} {
-    reverse_proxy nzbget:80
+    reverse_proxy nzbget:6789
 }
 
-sabnzbd.{MY_DOMAIN} {
-    reverse_proxy sabnzbd:80
+sabnzbd.{$MY_DOMAIN} {
+    reverse_proxy sabnzbd:8080
 }
 
-sonarr.{MY_DOMAIN} {
-    reverse_proxy sonarr:80
+sonarr.{$MY_DOMAIN} {
+    reverse_proxy sonarr:8989
 }
+
+radarr.{$MY_DOMAIN} {
+    reverse_proxy radarr:7878
+}
+
+hydra.{$MY_DOMAIN} {
+reverse_proxy hydra:5076
+}
+
+ombi.{$MY_DOMAIN} {
+    reverse_proxy ombi:5000
+}
+
+

@@ -1,0 +1,23 @@
+version: "3.7"
+services:
+  plex:
+    image: "plexinc/pms-docker:latest"
+    container_name: "plex"
+    hostname: "plex"
+    restart: "unless-stopped"
+    environment:
+      PLEX_UID: '${PUID}'
+      PLEX_GID: '${PGID}'
+      TZ: '${TZ}'
+      PLEX_CLAIM: '${PLEX_CLAIM}'
+      ADVERTIZE_IP: '${ADVERTIZE_IP}'
+    ports:
+      - '32400:32400/tcp'
+    volumes:
+      - '${CONFIG_DIR}/plex:/config'
+      - '${MEDIA_DIR}:/media'
+      - '/tmp:/tmp'
+networks:
+  default:
+    external:
+      name: $DOCKER_MY_NETWORK
