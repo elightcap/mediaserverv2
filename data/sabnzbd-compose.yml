@@ -1,0 +1,21 @@
+version: "3.7"
+services:
+
+  sabnzbd:
+    image: "linuxserver/sabnzbd:latest"
+    container_name: "sabnzbd"
+    hostname: "sabnzbd"
+    restart: "unless-stopped"
+    environment:
+      PUID: '${PUID}'
+      PGID: '${PGID}'
+      TZ: '${TZ}'
+    volumes:
+      - '${CONFIG_DIR}/sabnzbd:/config'
+      - '${DOWNLOADS_DIR}:/downloads'
+      - '${MEDIA_DIR}:/media'
+
+networks:
+  default:
+    external:
+      name: $DOCKER_MY_NETWORK

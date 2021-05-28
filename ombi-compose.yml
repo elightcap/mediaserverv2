@@ -1,0 +1,21 @@
+version: "3.7"
+services:
+
+  ombi:
+    image: "linuxserver/ombi:v4-preview"
+    container_name: "ombi"
+    hostname: "ombi"
+    restart: "unless-stopped"
+    environment:
+      PUID: '${PUID}'
+      PGID: '${PGID}'
+      TZ: '${TZ}'
+    volumes:
+      - '${CONFIG_DIR}/ombi:/config'
+      - '${DOWNLOADS_DIR}:/downloads'
+      - '${MEDIA_DIR}:/media'
+
+networks:
+  default:
+    external:
+      name: $DOCKER_MY_NETWORK
