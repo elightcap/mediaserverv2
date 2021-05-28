@@ -1,7 +1,7 @@
 version: "3.7"
 services:
 
-  sonarr:
+  radarr:
     image: "linuxserver/radarr:preview"
     container_name: "radarr"
     hostname: "radarr"
