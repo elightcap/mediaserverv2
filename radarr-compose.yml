@@ -1,0 +1,21 @@
+version: "3.7"
+services:
+
+  sonarr:
+    image: "linuxserver/radarr:preview"
+    container_name: "radarr"
+    hostname: "radarr"
+    restart: "unless-stopped"
+    environment:
+      PUID: '${PUID}'
+      PGID: '${PGID}'
+      TZ: '${TZ}'
+    volumes:
+      - '${CONFIG_DIR}/radarr:/config'
+      - '${DOWNLOADS_DIR}:/downloads'
+      - '${MEDIA_DIR}:/media'
+
+networks:
+  default:
+    external:
+      name: $DOCKER_MY_NETWORK

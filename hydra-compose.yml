@@ -1,0 +1,20 @@
+version: "3.7"
+services:
+
+  hydra:
+    image: "linuxserver/nzbhydra2:latest"
+    container_name: "hydra"
+    hostname: "hydra"
+    restart: "unless-stopped"
+    environment:
+      PUID: '${PUID}'
+      PGID: '${PGID}'
+      TZ: '${TZ}'
+    volumes:
+      - '${CONFIG_DIR}/hydra:/config'
+      - '${DOWNLOADS_DIR}:/downloads'
+
+networks:
+  default:
+    external:
+      name: $DOCKER_MY_NETWORK
