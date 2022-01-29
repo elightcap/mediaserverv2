@@ -1,32 +1,162 @@
 {
+    admin localhost:2019
+}
+
+{
     # acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
 }
 plex.{$MY_DOMAIN} {
+    log { 
+        output file /var/log/caddy/plexcaddylogs.json {
+            roll_size 2MiB
+        }
+        format console
+    }
     reverse_proxy plex:32400
 }
 
 nzbget.{$MY_DOMAIN} {
+    log {
+        output file /var/log/caddy/nzbcaddylogs.json {
+            roll_size 2MiB
+        }
+        format console
+    }
     reverse_proxy nzbget:6789
 }
 
 sabnzbd.{$MY_DOMAIN} {
+    log {
+        output file /var/log/caddy/sabcaddylogs.json {
+            roll_size 2MiB
+        }
+        format console
+    }
     reverse_proxy sabnzbd:8080
 }
 
 sonarr.{$MY_DOMAIN} {
-    reverse_proxy sonarr:8989
+    log {
+        output file /var/log/caddy/sonarrcaddylogs.json {
+            roll_size 2MiB
+        }
+        format console
+    }
+    reverse_proxy sonarr:8787
 }
 
 radarr.{$MY_DOMAIN} {
+    log {
+        output file /var/log/caddy/radarrcaddylogs.json {
+            roll_size 2MiB
+        }
+        format console
+    }
     reverse_proxy radarr:7878
 }
 
 hydra.{$MY_DOMAIN} {
-reverse_proxy hydra:5076
+    log {
+        output file /var/log/caddy/hydracaddylogs.json {
+            roll_size 2MiB
+        }
+        format console
+    }
+    reverse_proxy hydra:5076
 }
 
 ombi.{$MY_DOMAIN} {
+    log {
+        output file /var/log/caddy/ombicaddylogs.json {
+            roll_size 2MiB
+        }
+        format console
+    }
     reverse_proxy ombi:3579
 }
 
+jellyfin.{$MY_DOMAIN} {
+    log {
+        output file /var/log/caddy/jellyfincaddylogs.json {
+            roll_size 2MiB
+        }
+        format console
+    }
+    reverse_proxy jellyfin:8096
+}
 
+octopi.{$MY_DOMAIN} {
+    log {
+        output file /var/log/caddy/octopicaddylogs.json {
+            roll_size 2MiB
+        }
+        format console
+    }
+    reverse_proxy 6.6.6.118
+}
+
+blueiris.{$MY_DOMAIN} {
+    log {
+        output file /var/log/caddy/blueiriscaddylogs.json {
+            roll_size 2MiB
+        }
+        format console
+    }
+    reverse_proxy 6.6.6.6:81
+}
+
+guacamole.{$MY_DOMAIN} {
+    log {
+        output file /var/log/caddy/guaccaddy.json {
+            roll_size 2MiB
+        }
+        format console
+    }
+    rewrite / /guacamole
+    reverse_proxy http://6.6.6.103:8081
+}
+
+readarr.{$MY_DOMAIN} {
+    log {
+        output file /var/log/caddy/readarrcaddylogs.json {
+            roll_size 2MiB
+        }
+        format console
+    }
+    reverse_proxy readarr:8787
+}
+
+audioserve.{$MY_DOMAIN} {
+    log {
+        output file /var/log/caddy/audioservecaddylogs.json {
+            roll_size 2MiB
+        }
+        format console
+    }
+    reverse_proxy audioserve:3000
+}
+
+calibre.{$MY_DOMAIN} {
+    log {
+        output file /var/log/caddy/calibrecaddylogs.json {
+            roll_size 2MiB
+        }
+        format console
+    }
+    handle /admin* {
+        reverse_proxy ubooquity:2502
+    }
+    handle {
+        reverse_proxy ubooquity:2202
+    }
+}
+
+pterodactyl.{$MY_DOMAIN} {
+    log {
+        output file /var/log/caddy/pterlogs.json {
+            roll_size 2MiB
+        }
+        format console
+    }
+    reverse_proxy 6.6.6.156:4200
+}

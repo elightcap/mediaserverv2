@@ -14,6 +14,8 @@ services:
       - '${CONFIG_DIR}/sonarr:/config'
       - '${DOWNLOADS_DIR}:/downloads'
       - '${MEDIA_DIR}:/media'
+    ports:
+      - 8787:8787
 
 networks:
   default:

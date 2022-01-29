@@ -10,6 +10,8 @@ services:
       PUID: '${PUID}'
       PGID: '${PGID}'
       TZ: '${TZ}'
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     volumes:
       - '${CONFIG_DIR}/hydra:/config'
       - '${DOWNLOADS_DIR}:/downloads'

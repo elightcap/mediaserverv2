@@ -1,0 +1,19 @@
+version: '3'
+services:
+  tautulli:
+    image: tautulli/tautulli
+    container_name: tautulli
+    restart: unless-stopped
+    volumes:
+      - '${CONFIG_DIR}/radarr:/config'
+    environment:
+      PUID: '${PUID}'
+      PGID: '${PGID}'
+      TZ: '${TZ}'
+    ports:
+      - 8181:8181
+
+networks:
+  default:
+    external:
+      name: $DOCKER_MY_NETWORK

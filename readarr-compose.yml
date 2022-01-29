@@ -1,0 +1,21 @@
+version: "2.1"
+services:
+  readarr:
+    image: linuxserver/readarr:nightly
+    container_name: readarr
+    environment:
+      PUID: '${PUID}'
+      PGID: '${PGID}'
+      TZ: '${TZ}'
+    volumes:
+      - '${CONFIG_DIR}/readarr:/config'
+      - '${MEDIA_DIR}:/books'
+      - '${DOWNLOADS_DIR}:/downloads'
+    ports:
+      - 8888:8787
+    restart: unless-stopped
+
+networks:
+  default:
+    external:
+      name: $DOCKER_MY_NETWORK

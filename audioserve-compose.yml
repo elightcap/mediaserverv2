@@ -1,0 +1,16 @@
+version: '2' 
+services: 
+  audioserve:
+    image: "izderadicka/audioserve" 
+    container_name: audioserve 
+    restart: unless-stopped 
+    volumes:
+      - '${MEDIA_DIR}:/audiobooks'
+    command: /audiobooks --no-authentication --search-cache 
+    ports:
+      - "3030:3000"
+
+networks:
+  default:
+    external:
+      name: $DOCKER_MY_NETWORK

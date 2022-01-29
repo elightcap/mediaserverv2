@@ -2,7 +2,7 @@ version: "3.7"
 services:
 
   ombi:
-    image: "linuxserver/ombi:v4-preview"
+    image: "linuxserver/ombi:development"
     container_name: "ombi"
     hostname: "ombi"
     restart: "unless-stopped"
