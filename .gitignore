@@ -1,3 +1,4 @@
 .env
 /caddy/config/*
 /caddy/data/*
+/config

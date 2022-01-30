@@ -3,17 +3,18 @@ version: '2'
 services:
    ubooquity:
     restart: always
-    image: zerpex/ubooquity-docker
+    image: lscr.io/linuxserver/ubooquity
     container_name: ubooquity
     volumes:
-      - /home/elightcap/mediaserverv2/caddy/config/ubookuity:/config
-      - /mnt/nfs/media:/media
-      - /etc/localtime:/etc/localtime:ro
+      - /home/elightcap/mediaserverv2/config/ubookuity:/config
+      - /mnt/nfs/media/books:/books
     environment:
+      - PUID='${PUID}'
+      - PGID='${PGID}'
       - TZ=America/New_York
     ports:
       - 2202:2202
-      - 2502:2502
+      - 2203:2203
 networks:
   default:
     external:

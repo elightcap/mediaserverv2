@@ -42,7 +42,7 @@ sonarr.{$MY_DOMAIN} {
         }
         format console
     }
-    reverse_proxy sonarr:8787
+    reverse_proxy sonarr:8989
 }
 
 radarr.{$MY_DOMAIN} {
@@ -144,7 +144,7 @@ calibre.{$MY_DOMAIN} {
         format console
     }
     handle /admin* {
-        reverse_proxy ubooquity:2502
+        reverse_proxy ubooquity:2302
     }
     handle {
         reverse_proxy ubooquity:2202
