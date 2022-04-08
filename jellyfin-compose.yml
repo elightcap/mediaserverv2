@@ -8,10 +8,10 @@ services:
       - PGID=1000
       - TZ=America/New_York
     volumes:
-      - /home/elightcap/testing/config:/config
-      - /mnt/nfs/media/tvshows:/data/tvshows
-      - /mnt/nfs/media/movies:/data/movies
-      - /mnt/nfs/media/books:/data/books
+      - '${CONFIG_DIR}/jellyfin:/config'
+      - '${MEDIA_DIR}/tvshows:/data/tvshows'
+      - '${MEDIA_DIR}/movies:/data/movies'
+      - '${MEDIA_DIR}/books:/data/books'
     ports:
       - 8096:8096
     devices:

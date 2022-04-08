@@ -23,11 +23,11 @@ services:
       - nodeIP=0.0.0.0
       - nodePort=8267
     volumes:
-      - /home/elightcap/tdarr/server:/app/server
-      - /home/elightcap/tdarr/configs:/app/configs
-      - /home/elightcap/tdarr/logs:/app/logs
-      - /mnt/nfs/media:/media
-      - /home/elightcap/tdarrtranscode_cache:/temp
+      - '${CONFIG_DIR}/server/tdarr:/app/server'
+      - '${CONFIG_DIR}/tdarr:/app/configs'
+      - '${CONFIG_DIR}/logs/tdarr:/app/logs'
+      - '${MEDIA_DIR}:/media'
+      - '${CONFIG_DIR}/transcode:/temp'
 
 
 # node example
@@ -47,7 +47,7 @@ services:
       - serverIP=0.0.0.0
       - serverPort=8266
     volumes:
-      - /home/elightcap/tdarr/configs:/app/configs
-      - /home/elightcap/tdarr/logs:/app/logs
-      - /mnt/nfs/media:/media
-      - /home/elightcap/tdarrtranscode_cache:/temp
+      - '${CONFIG_DIR}/tdarr:/app/configs
+      - '${CONFIG_DIR}/logs/tdarr:/app/logs'
+      - '${MEDIA_DIR}:/media'
+      - '${CONFIG_DIR}/transcode:/temp'
