@@ -1,0 +1,22 @@
+version: "3.7"
+services:
+
+  lidarr:
+    image: "linuxserver/lidarr:latest"
+    container_name: "lidarr"
+    hostname: "lidarr"
+    restart: "unless-stopped"
+    environment:
+      PUID: '${PUID}'
+      PGID: '${PGID}'
+      TZ: '${TZ}'
+    volumes:
+      - '${CONFIG_DIR}/lidarr:/config'
+      - '${DOWNLOADS_DIR}:/downloads'
+      - '${MEDIA_DIR}:/media'
+    ports:
+      - 8686:8686
+networks:
+  default:
+    external:
+      name: $DOCKER_MY_NETWORK

@@ -1,0 +1,23 @@
+version: "2.1"
+services:
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin:nightly
+    container_name: jellyfin
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+    volumes:
+      - /home/elightcap/testing/config:/config
+      - /mnt/nfs/media/tvshows:/data/tvshows
+      - /mnt/nfs/media/movies:/data/movies
+      - /mnt/nfs/media/books:/data/books
+    ports:
+      - 8096:8096
+    devices:
+      - "/dev/dri:/dev/dri"
+    restart: unless-stopped
+networks:
+  default:
+    external:
+      name: caddy_net

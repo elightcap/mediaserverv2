@@ -112,8 +112,7 @@ guacamole.{$MY_DOMAIN} {
         }
         format console
     }
-    rewrite / /guacamole
-    reverse_proxy http://6.6.6.103:8081
+    reverse_proxy http://6.6.6.103:8084
 }
 
 readarr.{$MY_DOMAIN} {
@@ -159,4 +158,8 @@ pterodactyl.{$MY_DOMAIN} {
         format console
     }
     reverse_proxy 6.6.6.156:4200
+}
+
+slack.{$MY_DOMAIN} {
+    reverse_proxy 6.6.6.118:3001
 }
