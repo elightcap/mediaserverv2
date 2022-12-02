@@ -1,7 +1,7 @@
 version: "2.1"
 services:
   jellyfin:
-    image: lscr.io/linuxserver/jellyfin:nightly
+    image: lscr.io/linuxserver/jellyfin:10.8.1
     container_name: jellyfin
     environment:
       - PUID=1000
@@ -12,6 +12,7 @@ services:
       - '${MEDIA_DIR}/tvshows:/data/tvshows'
       - '${MEDIA_DIR}/movies:/data/movies'
       - '${MEDIA_DIR}/books:/data/books'
+      - '${MEDIA_DIR}/music:/data/music'
     ports:
       - 8096:8096
     devices:

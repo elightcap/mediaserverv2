@@ -20,8 +20,8 @@ services:
       - webUIPort=8265
       - internalNode=true
       - nodeID=MyInternalNode
-      - nodeIP=0.0.0.0
-      - nodePort=8267
+      - nodeIP=6.6.6.170
+      - nodePort=8268
     volumes:
       - '${CONFIG_DIR}/server/tdarr:/app/server'
       - '${CONFIG_DIR}/tdarr:/app/configs'
@@ -44,10 +44,10 @@ services:
       - nodeID=MainNode
       - nodeIP=0.0.0.0
       - nodePort=8268
-      - serverIP=0.0.0.0
+      - serverIP=6.6.6.170
       - serverPort=8266
     volumes:
-      - '${CONFIG_DIR}/tdarr:/app/configs
+      - '${CONFIG_DIR}/tdarr:/app/configs'
       - '${CONFIG_DIR}/logs/tdarr:/app/logs'
       - '${MEDIA_DIR}:/media'
       - '${CONFIG_DIR}/transcode:/temp'

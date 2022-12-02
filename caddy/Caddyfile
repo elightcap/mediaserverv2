@@ -5,24 +5,78 @@
 {
     # acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
 }
-plex.{$MY_DOMAIN} {
-    log { 
-        output file /var/log/caddy/plexcaddylogs.json {
+#psu.{$MY_DOMAIN} {
+#    reverse_proxy 0.0.0.0:5000 {
+#        header_up Host {http.request.host}
+#        header_up X-Real-IP {http.request.remote}
+#        header_up X-Forwarded-For {http.request.remote}
+#        header_up X-Forwarded-Port {http.request.port}
+#        header_up X-Forwarded-Proto {http.request.scheme}
+#    }
+#}
+
+http://vpn.{$MY_DOMAIN} {
+    log {
+        output file /var/log/caddy/vpncaddy.json {
             roll_size 2MiB
         }
         format console
     }
-    reverse_proxy plex:32400
+    reverse_proxy 6.6.6.197:80
 }
 
-nzbget.{$MY_DOMAIN} {
+
+stationeers.{$MY_DOMAIN} {
+    reverse_proxy stationeers:27016
+}
+ldap.{$MY_DOMAIN} {
     log {
-        output file /var/log/caddy/nzbcaddylogs.json {
+        output file /var/log/caddy/ldapcaddy.json {
             roll_size 2MiB
         }
         format console
     }
-    reverse_proxy nzbget:6789
+    reverse_proxy 6.6.6.200
+}
+
+mm.{$MY_DOMAIN} {
+    log {
+        output file /var/log/caddy/mmcaddylogs.json {
+            roll_size 2MiB
+        }
+        format console
+    }
+    reverse_proxy 6.6.6.156:8065
+}
+
+jenkins.{$MY_DOMAIN} {
+    log {
+        output file /var/log/caddy/jenkinscaddylogs.json {
+            roll_size 2MiB
+        }
+        format console
+    }
+    reverse_proxy 6.6.6.170:8083
+}
+
+hass.{$MY_DOMAIN} {
+    log {
+        output file /var/log/caddy/liddarcaddylogs.json {
+            roll_size 2MiB
+        }
+        format console
+    }
+    reverse_proxy 6.6.6.156:8123
+}
+
+lidarr.{$MY_DOMAIN} {
+    log { 
+        output file /var/log/caddy/liddarcaddylogs.json {
+            roll_size 2MiB
+        }
+        format console
+    }
+    reverse_proxy lidarr:8686
 }
 
 sabnzbd.{$MY_DOMAIN} {
@@ -33,6 +87,16 @@ sabnzbd.{$MY_DOMAIN} {
         format console
     }
     reverse_proxy sabnzbd:8080
+}
+
+deluge.{$MY_DOMAIN} {
+    log {
+        output file /var/log/caddy/delugecaddylogs.json {
+            roll_size 2MiB
+        }
+        format console
+    }
+    reverse_proxy deluge:8112
 }
 
 sonarr.{$MY_DOMAIN} {
@@ -112,7 +176,7 @@ guacamole.{$MY_DOMAIN} {
         }
         format console
     }
-    reverse_proxy http://6.6.6.103:8084
+    reverse_proxy guacamole:8080
 }
 
 readarr.{$MY_DOMAIN} {
@@ -125,41 +189,20 @@ readarr.{$MY_DOMAIN} {
     reverse_proxy readarr:8787
 }
 
-audioserve.{$MY_DOMAIN} {
+recipe.elightcap.com {
     log {
-        output file /var/log/caddy/audioservecaddylogs.json {
+        output file /var/log/caddy/recipecaddylogs.json {
             roll_size 2MiB
         }
         format console
     }
-    reverse_proxy audioserve:3000
-}
-
-calibre.{$MY_DOMAIN} {
-    log {
-        output file /var/log/caddy/calibrecaddylogs.json {
-            roll_size 2MiB
-        }
-        format console
-    }
-    handle /admin* {
-        reverse_proxy ubooquity:2302
-    }
-    handle {
-        reverse_proxy ubooquity:2202
-    }
-}
-
-pterodactyl.{$MY_DOMAIN} {
-    log {
-        output file /var/log/caddy/pterlogs.json {
-            roll_size 2MiB
-        }
-        format console
-    }
-    reverse_proxy 6.6.6.156:4200
+    reverse_proxy tandoor_nginx_recipes_1:80
 }
 
 slack.{$MY_DOMAIN} {
     reverse_proxy 6.6.6.118:3001
+}
+
+oktabot.{$MY_DOMAIN} {
+    reverse_proxy 6.6.6.118:3002
 }

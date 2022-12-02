@@ -1,21 +1,24 @@
 version: "2.1"
 services:
 
-  lidarr:
-    image: "linuxserver/lidarr:latest"
-    container_name: "lidarr"
-    hostname: "lidarr"
+  deluge:
+    image: "linuxserver/deluge:latest"
+    container_name: "deluge"
+    hostname: "deluge"
     restart: "unless-stopped"
     environment:
       PUID: '${PUID}'
       PGID: '${PGID}'
       TZ: '${TZ}'
     volumes:
-      - '${CONFIG_DIR}/lidarr:/config'
+      - '${CONFIG_DIR}/deluge:/config'
       - '${DOWNLOADS_DIR}:/downloads'
       - '${MEDIA_DIR}:/media'
     ports:
-      - 8686:8686
+      - 8112:8112
+      - 6881:6881
+      - 6881:6881/udp
+      - 58846:58846
 networks:
   default:
     external:

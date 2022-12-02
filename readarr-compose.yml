@@ -11,6 +11,7 @@ services:
       - '${CONFIG_DIR}/readarr:/config'
       - '${MEDIA_DIR}:/books'
       - '${DOWNLOADS_DIR}:/downloads'
+      - '${MEDIA_DIR}:/media'
     ports:
       - 8888:8787
     restart: unless-stopped

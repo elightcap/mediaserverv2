@@ -1,21 +1,23 @@
 version: "2.1"
 services:
 
-  lidarr:
-    image: "linuxserver/lidarr:latest"
-    container_name: "lidarr"
-    hostname: "lidarr"
+  transmission:
+    image: "lscr.io/linuxserver/transmission:latest"
+    container_name: "transmission"
+    hostname: "transmission"
     restart: "unless-stopped"
     environment:
       PUID: '${PUID}'
       PGID: '${PGID}'
       TZ: '${TZ}'
     volumes:
-      - '${CONFIG_DIR}/lidarr:/config'
+      - '${CONFIG_DIR}/transmission:/config'
       - '${DOWNLOADS_DIR}:/downloads'
       - '${MEDIA_DIR}:/media'
     ports:
-      - 8686:8686
+      - 9091:9091
+      - 51413:51413
+      - 51413:51413/udp
 networks:
   default:
     external:
