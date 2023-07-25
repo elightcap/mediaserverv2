@@ -1,0 +1,19 @@
+version: "2.1"
+services:
+  rutorrent:
+    image: ghcr.io/linuxserver/rutorrent
+    container_name: rutorrent
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - '${CONFIG_DIR}/rut:/config'
+      - /mnt/nfs/:/media/downloads
+    ports:
+      - 8080:80
+      - 5000:5000
+      - 51414:51413
+      - 6882:6881/udp
+    labels:
+        - "com.centurylinklabs.watchtower.enable=true"
+    restart: unless-stopped

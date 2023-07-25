@@ -1,19 +1,64 @@
 {
-    admin localhost:2019
+    admin :2019
 }
 
 {
     # acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
 }
-#psu.{$MY_DOMAIN} {
-#    reverse_proxy 0.0.0.0:5000 {
-#        header_up Host {http.request.host}
-#        header_up X-Real-IP {http.request.remote}
-#        header_up X-Forwarded-For {http.request.remote}
+
+###internal
+http://frigate.elightcap.internal, http://frigate/ {
+    log {
+        format json
+    }
+    reverse_proxy 10.0.70.9:5000
+}
+
+http://rutorrent.elightcap.internal, http://rutorrent/ {
+    reverse_proxy 10.0.60.6:8080
+}
+
+http://homepage.elightcap.internal {
+    reverse_proxy 10.0.60.6:3000
+}
+
+http://transmission.elightcap.internal {
+    reverse_proxy 10.0.60.6:9091
+}
+
+http://stash.elightcap.internal, http://stash/ {
+    reverse_proxy 10.0.60.6:9999
+}
+###external
+
+gitlab.elightcap.com {
+    reverse_proxy usclel-sat001.elightcap.internal:80
+}
+
+seerr.elightcap.com {
+    reverse_proxy usclel-med001.elightcap.internal:5055
+}
+
+photo.{$MY_DOMAIN} {
+    reverse_proxy usclel-med001.elightcap.internal:2342
+}
+
+matrix.{$MY_DOMAIN} {
+    reverse_proxy usclel-sat001.elightcap.internal:8008 {
+        header_up X-Forwarded-For {http.request.remote}
 #        header_up X-Forwarded-Port {http.request.port}
-#        header_up X-Forwarded-Proto {http.request.scheme}
-#    }
-#}
+        header_up X-Forwarded-Proto {http.request.scheme}
+    }
+}
+
+stream.{$MY_DOMAIN} {
+    root * /data/stream
+    file_server
+}
+
+hiring.{$MY_DOMAIN} {
+    reverse_proxy 192.168.1.108:8081
+}
 
 http://vpn.{$MY_DOMAIN} {
     log {
@@ -29,14 +74,17 @@ http://vpn.{$MY_DOMAIN} {
 stationeers.{$MY_DOMAIN} {
     reverse_proxy stationeers:27016
 }
+
 ldap.{$MY_DOMAIN} {
-    log {
-        output file /var/log/caddy/ldapcaddy.json {
-            roll_size 2MiB
-        }
-        format console
+    @oktaverify {
+        header !x-okta-verification-challenge
     }
-    reverse_proxy 6.6.6.200
+    handle {
+        #var {
+        #    oktaverifyheadervalue {http.request.header.x-okta-verification-challenge}
+        #}
+        respond / \{"verification":"{http.request.header.x-okta-verification-challenge}"\}
+    }
 }
 
 mm.{$MY_DOMAIN} {
@@ -46,17 +94,7 @@ mm.{$MY_DOMAIN} {
         }
         format console
     }
-    reverse_proxy 6.6.6.156:8065
-}
-
-jenkins.{$MY_DOMAIN} {
-    log {
-        output file /var/log/caddy/jenkinscaddylogs.json {
-            roll_size 2MiB
-        }
-        format console
-    }
-    reverse_proxy 6.6.6.170:8083
+    reverse_proxy usclel-sat001.elightcap.internal:8065
 }
 
 hass.{$MY_DOMAIN} {
@@ -66,7 +104,7 @@ hass.{$MY_DOMAIN} {
         }
         format console
     }
-    reverse_proxy 6.6.6.156:8123
+    reverse_proxy 10.0.60.12:8123
 }
 
 lidarr.{$MY_DOMAIN} {

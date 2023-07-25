@@ -1,9 +1,13 @@
-version: "3"
+version: '3'
+
 services:
   watchtower:
-    restart: "unless-stopped"
-    container_name: "watchtower"
     image: containrrr/watchtower
+    container_name: watchtower
+    restart: always
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    command: --interval 6000 --cleanup
+      - /etc/timezone:/etc/timezone:ro
+    environment:
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_INCLUDE_RESTARTING=true
