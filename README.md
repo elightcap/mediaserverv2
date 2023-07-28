@@ -4,8 +4,9 @@ docker-based plex & usenet media server using custom subdomains with tls
 
 ## Changes from V1
 - Break each service into individual docker-compose files.  This might make initial start a bit worse, but makes changes and management more readable.
+- Move from Plex to Jellyfin
 - Change from traefik to caddyV2.  Caddy's config is just easier to work with to me, and being able to make dynamic changes is pretty neat
-- More Services: Tautulli(Plex dashboard), Readarr(ebooks), Ubooquity(OPDS), and Watchtower(autoupdate containers)
+- Add ebooks through readarr
 - Remove deluge because I dont torrent anymore
 
 ## Features
