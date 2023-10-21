@@ -13,6 +13,7 @@ services:
       - '${MEDIA_DIR}/movies:/data/movies'
       - '${MEDIA_DIR}/books:/data/books'
       - '${MEDIA_DIR}/music:/data/music'
+      - tool_vol:/usr/share/jellyfin/web
     ports:
       - 8096:8096
     devices:
@@ -22,3 +23,7 @@ networks:
   default:
     external:
       name: caddy_net
+
+volumes:
+  tool_vol:
+    external: true

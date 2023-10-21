@@ -1,17 +1,27 @@
-{
-    admin :2019
+###auth stuff
+(trusted_proxy_list) {
+    trusted_proxies 10.0.0.0/8 172.16.0.0/16 192.168.0.0/16 fc00::/7
 }
 
-{
-    # acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
+auth.elightcap.com {
+    reverse_proxy authelia:9091 {
+        import trusted_proxy_list
+    }
 }
-
 ###internal
+
+http://klipper.elightcap.internal, http://klipper/ {
+    log {
+        format json
+    }
+    reverse_proxy 10.0.40.25:4408
+}
+
 http://frigate.elightcap.internal, http://frigate/ {
     log {
         format json
     }
-    reverse_proxy 10.0.70.9:5000
+    reverse_proxy 10.0.70.10:5000
 }
 
 http://rutorrent.elightcap.internal, http://rutorrent/ {
@@ -23,7 +33,7 @@ http://homepage.elightcap.internal {
 }
 
 http://transmission.elightcap.internal {
-    reverse_proxy 10.0.60.6:9091
+    reverse_proxy 10.0.60.6:9092
 }
 
 http://stash.elightcap.internal, http://stash/ {
@@ -31,24 +41,37 @@ http://stash.elightcap.internal, http://stash/ {
 }
 ###external
 
-gitlab.elightcap.com {
-    reverse_proxy usclel-sat001.elightcap.internal:80
+#gitlab.elightcap.com {
+#    reverse_proxy usclel-sat001.elightcap.internal:80
+#}
+
+s.elightcap.com {
+    reverse_proxy shlink:8080
+}
+
+watch.elightcap.com {
+  encode gzip
+  reverse_proxy usclel-med001.elightcap.internal:8088
+}
+
+clipable.elightcap.com {
+    @allowed {
+        remote_ip 23.125.248.243/32 10.0.0.0/8
+    }
+    handle @allowed {
+        reverse_proxy 10.0.60.6:88 {
+            header_up X-Real-IP {remote_host}
+        }
+    }
+    respond 403
 }
 
 seerr.elightcap.com {
     reverse_proxy usclel-med001.elightcap.internal:5055
 }
 
-photo.{$MY_DOMAIN} {
-    reverse_proxy usclel-med001.elightcap.internal:2342
-}
-
-matrix.{$MY_DOMAIN} {
-    reverse_proxy usclel-sat001.elightcap.internal:8008 {
-        header_up X-Forwarded-For {http.request.remote}
-#        header_up X-Forwarded-Port {http.request.port}
-        header_up X-Forwarded-Proto {http.request.scheme}
-    }
+http://ark.elightcap.com {
+    reverse_proxy 10.0.60.23:7777
 }
 
 stream.{$MY_DOMAIN} {
@@ -56,45 +79,30 @@ stream.{$MY_DOMAIN} {
     file_server
 }
 
-hiring.{$MY_DOMAIN} {
-    reverse_proxy 192.168.1.108:8081
-}
+#hiring.{$MY_DOMAIN} {
+#    reverse_proxy 192.168.1.108:8081
+#}
 
-http://vpn.{$MY_DOMAIN} {
+#ldap.{$MY_DOMAIN} {
+#    @oktaverify {
+#        header !x-okta-verification-challenge
+#    }
+#    handle {
+#        #var {
+#        #    oktaverifyheadervalue {http.request.header.x-okta-verification-challenge}
+#        #}
+#        respond / \{"verification":"{http.request.header.x-okta-verification-challenge}"\}
+#    }
+#}
+
+vpn.elightcap.com {
     log {
-        output file /var/log/caddy/vpncaddy.json {
+        output file /var/log/caddy/vpncaddylogs.json {
             roll_size 2MiB
         }
         format console
     }
-    reverse_proxy 6.6.6.197:80
-}
-
-
-stationeers.{$MY_DOMAIN} {
-    reverse_proxy stationeers:27016
-}
-
-ldap.{$MY_DOMAIN} {
-    @oktaverify {
-        header !x-okta-verification-challenge
-    }
-    handle {
-        #var {
-        #    oktaverifyheadervalue {http.request.header.x-okta-verification-challenge}
-        #}
-        respond / \{"verification":"{http.request.header.x-okta-verification-challenge}"\}
-    }
-}
-
-mm.{$MY_DOMAIN} {
-    log {
-        output file /var/log/caddy/mmcaddylogs.json {
-            roll_size 2MiB
-        }
-        format console
-    }
-    reverse_proxy usclel-sat001.elightcap.internal:8065
+    reverse_proxy 10.0.60.17:51820
 }
 
 hass.{$MY_DOMAIN} {
@@ -114,6 +122,23 @@ lidarr.{$MY_DOMAIN} {
         }
         format console
     }
+    @api {
+        path_regexp ^/api/.*
+    }
+    handle @api {
+        reverse_proxy lidarr:8686
+    }
+    handle {
+        forward_auth authelia:9091 {
+            uri /api/verify?rd=https://auth.elightcap.com
+            copy_headers Remote-User Remote-Groups Remote-Name Remote-Email
+            import trusted_proxy_list
+
+        }
+        reverse_proxy lidarr:8686 {
+            import trusted_proxy_list
+        }
+    }
     reverse_proxy lidarr:8686
 }
 
@@ -124,7 +149,24 @@ sabnzbd.{$MY_DOMAIN} {
         }
         format console
     }
-    reverse_proxy sabnzbd:8080
+    @api {
+        path_regexp ^.*/api/.*
+    }
+    handle @api {
+        reverse_proxy sabnzbd:8080
+    }
+    handle {
+        forward_auth authelia:9091 {
+            uri /api/verify?rd=https://auth.elightcap.com
+            copy_headers Remote-User Remote-Groups Remote-Name Remote-Email
+            import trusted_proxy_list
+
+        }
+        reverse_proxy sabnzbd:8080 {
+            import trusted_proxy_list
+        }
+    }
+
 }
 
 deluge.{$MY_DOMAIN} {
@@ -144,7 +186,23 @@ sonarr.{$MY_DOMAIN} {
         }
         format console
     }
-    reverse_proxy sonarr:8989
+    @api {
+        path_regexp ^/api/.*
+    }
+    handle @api {
+        reverse_proxy sonarr:8989
+    }
+    handle {
+        forward_auth authelia:9091 {
+            uri /api/verify?rd=https://auth.elightcap.com
+            copy_headers Remote-User Remote-Groups Remote-Name Remote-Email
+            import trusted_proxy_list
+
+        }
+        reverse_proxy sonarr:8989 {
+            import trusted_proxy_list
+        }
+    }
 }
 
 radarr.{$MY_DOMAIN} {
@@ -154,7 +212,23 @@ radarr.{$MY_DOMAIN} {
         }
         format console
     }
-    reverse_proxy radarr:7878
+    @api {
+        path_regexp ^/api/.*
+    }
+    handle @api {
+        reverse_proxy radarr:7878
+    }
+    handle {
+        forward_auth authelia:9091 {
+            uri /api/verify?rd=https://auth.elightcap.com
+            copy_headers Remote-User Remote-Groups Remote-Name Remote-Email
+            import trusted_proxy_list
+
+        }
+        reverse_proxy radarr:7878 {
+            import trusted_proxy_list
+        }
+    }
 }
 
 hydra.{$MY_DOMAIN} {
@@ -167,15 +241,6 @@ hydra.{$MY_DOMAIN} {
     reverse_proxy hydra:5076
 }
 
-ombi.{$MY_DOMAIN} {
-    log {
-        output file /var/log/caddy/ombicaddylogs.json {
-            roll_size 2MiB
-        }
-        format console
-    }
-    reverse_proxy ombi:3579
-}
 
 jellyfin.{$MY_DOMAIN} {
     log {
@@ -187,35 +252,15 @@ jellyfin.{$MY_DOMAIN} {
     reverse_proxy jellyfin:8096
 }
 
-octopi.{$MY_DOMAIN} {
-    log {
-        output file /var/log/caddy/octopicaddylogs.json {
-            roll_size 2MiB
-        }
-        format console
-    }
-    reverse_proxy 6.6.6.118
-}
-
-blueiris.{$MY_DOMAIN} {
-    log {
-        output file /var/log/caddy/blueiriscaddylogs.json {
-            roll_size 2MiB
-        }
-        format console
-    }
-    reverse_proxy 6.6.6.6:81
-}
-
-guacamole.{$MY_DOMAIN} {
-    log {
-        output file /var/log/caddy/guaccaddy.json {
-            roll_size 2MiB
-        }
-        format console
-    }
-    reverse_proxy guacamole:8080
-}
+#guacamole.{$MY_DOMAIN} {
+#    log {
+#        output file /var/log/caddy/guaccaddy.json {
+#            roll_size 2MiB
+#        }
+#        format console
+#    }
+#    reverse_proxy guacamole:8080
+#}
 
 readarr.{$MY_DOMAIN} {
     log {
@@ -224,23 +269,45 @@ readarr.{$MY_DOMAIN} {
         }
         format console
     }
-    reverse_proxy readarr:8787
-}
-
-recipe.elightcap.com {
-    log {
-        output file /var/log/caddy/recipecaddylogs.json {
-            roll_size 2MiB
-        }
-        format console
+    @api {
+        path_regexp ^/api/.*
     }
-    reverse_proxy tandoor_nginx_recipes_1:80
+    handle @api {
+        reverse_proxy readarr:8787
+    }
+    handle {
+        forward_auth authelia:9091 {
+            uri /api/verify?rd=https://auth.elightcap.com
+            copy_headers Remote-User Remote-Groups Remote-Name Remote-Email
+            import trusted_proxy_list
+
+        }
+        reverse_proxy readarr:8787 {
+            import trusted_proxy_list
+        }
+    }
 }
 
-slack.{$MY_DOMAIN} {
-    reverse_proxy 6.6.6.118:3001
-}
+#recipe.elightcap.com {
+#    log {
+#        output file /var/log/caddy/recipecaddylogs.json {
+#            roll_size 2MiB
+#        }
+#        format console
+#    }
+#    reverse_proxy tandoor_nginx_recipes_1:80
+#}
 
-oktabot.{$MY_DOMAIN} {
-    reverse_proxy 6.6.6.118:3002
+stash.elightcap.com {
+    handle {
+        forward_auth authelia:9091 {
+            uri /api/verify?rd=https://auth.elightcap.com
+            copy_headers Remote-User Remote-Groups Remote-Name Remote-Email
+            import trusted_proxy_list
+
+        }
+        reverse_proxy 10.0.60.6:9999 {
+            import trusted_proxy_list
+        }
+    }
 }
